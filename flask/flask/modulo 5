@@ -1,0 +1,40 @@
+from flask import Flask, render_template, request, url_for, redirect
+from bson.objectid import ObjectId
+from pymongo import MongoClient
+
+app = Flask(__name__)
+
+conn = MongoClient('localhost', 27017)
+db = conn['mongo_slangs']
+slagns = db['Slangs']
+
+
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    slangs = db.slangs.find()  # Obtener todos los documentos de la colección slangs
+    if request.method == 'POST':
+        palabra = request.form.get('palabra')
+        significado = request.form.get('significado')
+        db.slangs.insert_one({'palabra': palabra, 'significado': significado})
+        return redirect(url_for('index'))
+    return render_template('slang.html', slangs=slangs)  # Pasar la variable slangs a la plantilla slang.html
+
+@app.route('/slangs/actualizar/<string:id>', methods=['POST', 'GET'])
+def actualizar_slang(id):
+    slang = db.slangs.find_one({'_id': ObjectId(id)})
+    if request.method == 'POST':
+        palabra = request.form.get('palabra')
+        significado = request.form.get('significado')
+        db.slangs.update_one({'_id': ObjectId(id)}, {'$set': {'palabra': palabra, 'significado': significado}})
+        return redirect(url_for('index'))
+    return render_template('slang.html', slang=slang)
+
+@app.route('/slangs/<id>', methods=['POST'])
+def eliminar_slang(id):
+    db.slangs.delete_one({'_id': ObjectId(id)})
+    return redirect(url_for('index'))
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

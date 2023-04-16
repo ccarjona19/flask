@@ -1,0 +1,12 @@
+table {
+    border-collapse: separate;
+    border-spacing: 10px;
+  }
+  
+td {
+    padding: 0 20px 0 20px;
+  }
+
+button{
+    margin: 2px;
+}

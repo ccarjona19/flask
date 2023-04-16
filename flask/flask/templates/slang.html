@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">    <title>Slangs</title>
+  </head>
+  <body>
+    <h1>Lista de Slangs</h1>
+    <table >
+      <tr>
+        <th>Palabra</th>
+        <th>Significado</th>
+        <th>Acciones</th>
+      </tr>
+      {% for slang in slangs %}
+        <tr>
+          <td>{{ slang['palabra'] }}</td>
+          <td>{{ slang['significado'] }}</td>
+          <td>
+            <form action="{{ url_for('actualizar_slang', id = slang['_id']) }}" method="GET">
+                <button type="submit">Editar</button>
+            </form>
+
+            <form action="{{ url_for('eliminar_slang', id = slang['_id']) }}" method="POST">
+                <button type="submit">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    {% if slang == index %}
+      <h2>Agregar Slang</h2>
+      <form action="{{ url_for('index') }}" method="POST">
+        <label for="palabra">Palabra:</label>
+        <input type="text" id="palabra" name="palabra" />
+        <label for="significado">Significado:</label>
+        <input type="text" id="significado" name="significado" />
+        <button type="submit">Agregar</button>
+      </form>
+    {% else %}
+      <h2>Editar Slang</h2>
+      <form action="{{ url_for('actualizar_slang', id = slang['_id']) }}" method="POST">
+        <label for="palabra">Palabra:</label>
+        <input type="text" id="palabra" name="palabra" value="{{ slang['palabra'] }}" />
+        <label for="significado">Significado:</label>
+        <input type="text" id="significado" name="significado" value="{{ slang['significado'] }}" />
+        <button type="submit">Actualizar</button>
+      </form>
+    {% endif %}
+  </body>
+</html>
